@@ -1,0 +1,20 @@
+{
+  "name": "gom-lang",
+  "version": "0.0.1",
+  "module": "index.ts",
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/node": "^20.11.2",
+    "typescript": "^5.3.3"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "scripts": {
+    "execute": "tsx ./index.ts"
+  },
+  "type": "module",
+  "dependencies": {
+    "antlr4": "4.13.1"
+  }
+}
