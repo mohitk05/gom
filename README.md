@@ -1,4 +1,4 @@
-# gom-lang
+# The Gom Programming Language
 
 Gom is an evolving language.
 
