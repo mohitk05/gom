@@ -14,23 +14,30 @@ import {
 import GomVisitor from "../antlr/GomVisitor";
 import { SemanticError } from "../semantics/Error";
 import { ExpressionResult, GomFunction, Scope } from "../semantics/Scope";
-import { CharStream, CommonTokenStream } from "antlr4";
-import GomLexer from "../antlr/GomLexer";
-import GomParser from "../antlr/GomParser";
-import { readFileSync } from "fs";
+import { ModuleResolver } from "./ModuleResolver";
 
-const MODULE_PATH_PREFIX = "./src/";
 type ModulePublicItem = GomFunction;
 
 export class ExecVisitor extends GomVisitor<ExpressionResult> {
+  moduleName: string;
   rootScope: Scope;
   currentScope: Scope;
   importedModules: Map<string, ModuleVisitor> = new Map();
 
+  moduleResolver: ModuleResolver;
+
   standardLibraryFunctions = ["print", "toString"];
 
-  constructor() {
+  constructor({
+    moduleResolver,
+    name,
+  }: {
+    moduleResolver: ModuleResolver;
+    name?: string;
+  }) {
     super();
+    this.moduleName = name || "main";
+    this.moduleResolver = moduleResolver;
     this.rootScope = new Scope();
     this.currentScope = this.rootScope;
   }
@@ -40,13 +47,11 @@ export class ExecVisitor extends GomVisitor<ExpressionResult> {
       return this.importedModules.get(moduleName);
     } else {
       try {
-        const modulePath = MODULE_PATH_PREFIX + moduleName + ".gom";
-        const inputStream = new CharStream(readFileSync(modulePath, "utf8"));
-        const lexer = new GomLexer(inputStream);
-        const tokenStream = new CommonTokenStream(lexer);
-        const parser = new GomParser(tokenStream);
-        const visitor = new ModuleVisitor();
-        visitor.visit(parser.program());
+        const visitor = new ModuleVisitor({
+          name: moduleName,
+          moduleResolver: this.moduleResolver,
+        });
+        visitor.visit(this.moduleResolver.getModule(moduleName));
         this.importedModules.set(moduleName, visitor);
         visitor.getPublicItems().forEach((value, key) => {
           // Handle other imports later
@@ -76,25 +81,23 @@ export class ExecVisitor extends GomVisitor<ExpressionResult> {
   };
 
   visitFunctionDecl = (ctx: FunctionDeclContext) => {
-    this.currentScope.addFunction(ctx.IDENTIFIER(0).getText(), ctx);
+    this.currentScope.addFunction(ctx.IDENTIFIER().getText(), ctx);
     return null;
   };
 
   visitStatementBlock = (ctx: StatementBlockContext) => {
-    this.visitChildren(ctx);
-    ctx
-      .statement_list()
-      .slice(0, -1)
-      .forEach((statement) => {
-        this.visit(statement);
-      });
-
-    const lastStatement = ctx.statement_list().slice(-1)[0];
-
-    if (lastStatement.returnStatement()) {
-      return this.visit(lastStatement);
+    const statements = ctx.statement_list();
+    if (statements[statements.length - 1].returnStatement()) {
+      statements
+        .slice(0, statements.length - 1)
+        .forEach((statement) => this.visit(statement));
+      const returnType = this.visit(
+        statements[statements.length - 1].returnStatement().expression()
+      );
+      return returnType;
     }
 
+    statements.forEach((statement) => this.visit(statement));
     return null;
   };
 
@@ -254,6 +257,10 @@ export class ExecVisitor extends GomVisitor<ExpressionResult> {
   _visitStdLibraryFunction = (name: string, ctx: CallContext) => {
     const args = ctx.expression_list();
     const argValues = args.map((arg) => this.visit(arg));
+    return this._execStdLibraryFunction(name, argValues);
+  };
+
+  _execStdLibraryFunction = (name: string, argValues: ExpressionResult[]) => {
     switch (name) {
       case "print":
         console.log(...argValues);
@@ -261,11 +268,7 @@ export class ExecVisitor extends GomVisitor<ExpressionResult> {
       case "toString":
         return argValues[0].toString();
       default:
-        throw new SemanticError(
-          `Function "${name}" not defined`,
-          name,
-          ctx.start.line
-        );
+        return null;
     }
   };
 
@@ -279,9 +282,8 @@ export class ExecVisitor extends GomVisitor<ExpressionResult> {
       const args = ctx.expression_list();
       const argValues = args.map((arg) => this.visit(arg));
       const argNames = fn.ctx
-        .IDENTIFIER_list()
-        .slice(1)
-        .map((arg) => arg.getText());
+        .typedIdentifier_list()
+        .map((arg) => arg.IDENTIFIER().getText());
 
       const scope = new Scope(this.currentScope);
       for (let i = 0; i < argNames.length; i++) {
@@ -296,6 +298,36 @@ export class ExecVisitor extends GomVisitor<ExpressionResult> {
         `Function "${name}" not defined`,
         name,
         ctx.start.line
+      );
+    }
+  };
+
+  _visitExpression_Call_withArgs = (
+    functionName: string,
+    args: ExpressionResult[]
+  ) => {
+    if (this._isStdLibraryFunction(functionName)) {
+      return this._execStdLibraryFunction(functionName, args);
+    }
+    const fn = this.currentScope.getFunction(functionName);
+    if (fn) {
+      const argNames = fn.ctx
+        .typedIdentifier_list()
+        .map((arg) => arg.IDENTIFIER().getText());
+
+      const scope = new Scope(this.currentScope);
+      for (let i = 0; i < argNames.length; i++) {
+        scope.addVariable(argNames[i], undefined, args[i]);
+      }
+      this.currentScope = scope;
+      const result = this.visit(fn.ctx.statementBlock());
+      this.currentScope = this.currentScope.parent;
+      return result;
+    } else {
+      throw new SemanticError(
+        `Function "${functionName}" not defined`,
+        functionName,
+        0
       );
     }
   };
@@ -321,11 +353,20 @@ export class ExecVisitor extends GomVisitor<ExpressionResult> {
         );
       }
 
+      const argValues = ctx
+        .access()
+        .call()
+        .expression_list()
+        .map((arg) => this.visit(arg));
+
       // Closure
       const oldRootScope = gomModule.rootScope;
       gomModule.rootScope.parent = this.currentScope;
       gomModule.rootScope = this.currentScope;
-      const retVal = gomModule._visitExpression_Call(ctx.access().call());
+      const retVal = gomModule._visitExpression_Call_withArgs(
+        ctx.access().call().IDENTIFIER().getText(),
+        argValues
+      );
       gomModule.rootScope = oldRootScope;
       return retVal;
     }
@@ -406,23 +447,18 @@ export class ExecVisitor extends GomVisitor<ExpressionResult> {
 }
 
 class ModuleVisitor extends ExecVisitor {
-  private publicItems: Map<string, ModulePublicItem>;
-
-  constructor() {
-    super();
-    this.publicItems = new Map();
-  }
+  private publicItems: Map<string, ModulePublicItem> = new Map();
 
   getPublicItems() {
     return this.publicItems;
   }
 
   visitFunctionDecl = (ctx: FunctionDeclContext) => {
-    const name = ctx.IDENTIFIER(0).getText();
+    const name = ctx.IDENTIFIER().getText();
     if (ctx.PUB()) {
       this.publicItems.set(name, { ctx });
     }
-    this.currentScope.addFunction(ctx.IDENTIFIER(0).getText(), ctx);
+    this.currentScope.addFunction(name, ctx);
     return null;
   };
 }

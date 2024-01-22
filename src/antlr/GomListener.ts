@@ -6,6 +6,7 @@ import {ParseTreeListener} from "antlr4";
 import { ProgramContext } from "./GomParser";
 import { ImportStatementContext } from "./GomParser";
 import { FunctionDeclContext } from "./GomParser";
+import { TypedIdentifierContext } from "./GomParser";
 import { StatementBlockContext } from "./GomParser";
 import { StatementContext } from "./GomParser";
 import { LetStatementContext } from "./GomParser";
@@ -53,6 +54,16 @@ export default class GomListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	exitFunctionDecl?: (ctx: FunctionDeclContext) => void;
+	/**
+	 * Enter a parse tree produced by `GomParser.typedIdentifier`.
+	 * @param ctx the parse tree
+	 */
+	enterTypedIdentifier?: (ctx: TypedIdentifierContext) => void;
+	/**
+	 * Exit a parse tree produced by `GomParser.typedIdentifier`.
+	 * @param ctx the parse tree
+	 */
+	exitTypedIdentifier?: (ctx: TypedIdentifierContext) => void;
 	/**
 	 * Enter a parse tree produced by `GomParser.statementBlock`.
 	 * @param ctx the parse tree

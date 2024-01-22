@@ -9,8 +9,12 @@ importStatement
     ;
 
 functionDecl
-    : PUB? FUNCTION IDENTIFIER LEFTPAREN (IDENTIFIER (COMMA IDENTIFIER)*)? RIGHTPAREN statementBlock
+    : PUB? FUNCTION IDENTIFIER LEFTPAREN (typedIdentifier (COMMA typedIdentifier)*)? RIGHTPAREN COLON TYPE statementBlock
     ;
+
+typedIdentifier
+    : IDENTIFIER COLON TYPE
+    ; 
 
 statementBlock
     : LEFTBRACE statement+ RIGHTBRACE
@@ -58,6 +62,13 @@ call
 
 access
     : IDENTIFIER DOT call
+    ;
+
+TYPE
+    : 'int'
+    | 'string'
+    | 'bool'
+    | 'null'
     ;
 
 BOOLEAN
@@ -133,9 +144,13 @@ COMMA
 SEMICOLON
     : ';'
     ;
+
+COLON
+    : ':'
+    ;
     
 IDENTIFIER
-    : LETTER+
+    : LETTER (LETTER | '_' | DIGIT)*
     ;
 
 NUMBER
@@ -151,7 +166,7 @@ LETTER
     ;
 
 STRING_LITERAL
-    : QUOTE (DIGIT | LETTER | ' ')+ QUOTE
+    : QUOTE ~["]* QUOTE
     ;
 
 WHITE_SPACE

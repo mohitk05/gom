@@ -1,6 +1,7 @@
-let a = 1;
-let b = 1;
-
-pub fn log(message) {
+pub fn log(message: string): null {
     print(message);
+}
+
+pub fn log_star(message: string): null {
+    print("*** " + message + " ***");
 }

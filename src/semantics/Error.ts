@@ -2,7 +2,7 @@ export class SemanticError extends Error {
   token: string;
   lineNumber: number;
   constructor(message: string, token: string, lineNumber: number) {
-    super(message);
+    super(`Line ${lineNumber}: ${message} in ${token}`);
     this.token = token;
   }
 

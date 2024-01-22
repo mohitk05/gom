@@ -6,6 +6,7 @@ import {ParseTreeVisitor} from 'antlr4';
 import { ProgramContext } from "./GomParser";
 import { ImportStatementContext } from "./GomParser";
 import { FunctionDeclContext } from "./GomParser";
+import { TypedIdentifierContext } from "./GomParser";
 import { StatementBlockContext } from "./GomParser";
 import { StatementContext } from "./GomParser";
 import { LetStatementContext } from "./GomParser";
@@ -44,6 +45,12 @@ export default class GomVisitor<Result> extends ParseTreeVisitor<Result> {
 	 * @return the visitor result
 	 */
 	visitFunctionDecl?: (ctx: FunctionDeclContext) => Result;
+	/**
+	 * Visit a parse tree produced by `GomParser.typedIdentifier`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitTypedIdentifier?: (ctx: TypedIdentifierContext) => Result;
 	/**
 	 * Visit a parse tree produced by `GomParser.statementBlock`.
 	 * @param ctx the parse tree

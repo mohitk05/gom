@@ -19,55 +19,61 @@ import GomVisitor from "./GomVisitor.js";
 type int = number;
 
 export default class GomParser extends Parser {
-	public static readonly BOOLEAN = 1;
-	public static readonly PUB = 2;
-	public static readonly LET = 3;
-	public static readonly FUNCTION = 4;
-	public static readonly RETURN = 5;
-	public static readonly IMPORT = 6;
-	public static readonly IF = 7;
-	public static readonly ELSE = 8;
-	public static readonly OPERATOR = 9;
-	public static readonly DOT = 10;
-	public static readonly QUOTE = 11;
-	public static readonly EQ = 12;
-	public static readonly LEFTPAREN = 13;
-	public static readonly RIGHTPAREN = 14;
-	public static readonly LEFTBRACE = 15;
-	public static readonly RIGHTBRACE = 16;
-	public static readonly COMMA = 17;
-	public static readonly SEMICOLON = 18;
-	public static readonly IDENTIFIER = 19;
-	public static readonly NUMBER = 20;
-	public static readonly DIGIT = 21;
-	public static readonly LETTER = 22;
-	public static readonly STRING_LITERAL = 23;
-	public static readonly WHITE_SPACE = 24;
+	public static readonly TYPE = 1;
+	public static readonly BOOLEAN = 2;
+	public static readonly PUB = 3;
+	public static readonly LET = 4;
+	public static readonly FUNCTION = 5;
+	public static readonly RETURN = 6;
+	public static readonly IMPORT = 7;
+	public static readonly IF = 8;
+	public static readonly ELSE = 9;
+	public static readonly OPERATOR = 10;
+	public static readonly DOT = 11;
+	public static readonly QUOTE = 12;
+	public static readonly EQ = 13;
+	public static readonly LEFTPAREN = 14;
+	public static readonly RIGHTPAREN = 15;
+	public static readonly LEFTBRACE = 16;
+	public static readonly RIGHTBRACE = 17;
+	public static readonly COMMA = 18;
+	public static readonly SEMICOLON = 19;
+	public static readonly COLON = 20;
+	public static readonly IDENTIFIER = 21;
+	public static readonly NUMBER = 22;
+	public static readonly DIGIT = 23;
+	public static readonly LETTER = 24;
+	public static readonly STRING_LITERAL = 25;
+	public static readonly WHITE_SPACE = 26;
 	public static readonly EOF = Token.EOF;
 	public static readonly RULE_program = 0;
 	public static readonly RULE_importStatement = 1;
 	public static readonly RULE_functionDecl = 2;
-	public static readonly RULE_statementBlock = 3;
-	public static readonly RULE_statement = 4;
-	public static readonly RULE_letStatement = 5;
-	public static readonly RULE_returnStatement = 6;
-	public static readonly RULE_ifStatement = 7;
-	public static readonly RULE_expressionStatement = 8;
-	public static readonly RULE_expression = 9;
-	public static readonly RULE_expressionTail = 10;
-	public static readonly RULE_call = 11;
-	public static readonly RULE_access = 12;
+	public static readonly RULE_typedIdentifier = 3;
+	public static readonly RULE_statementBlock = 4;
+	public static readonly RULE_statement = 5;
+	public static readonly RULE_letStatement = 6;
+	public static readonly RULE_returnStatement = 7;
+	public static readonly RULE_ifStatement = 8;
+	public static readonly RULE_expressionStatement = 9;
+	public static readonly RULE_expression = 10;
+	public static readonly RULE_expressionTail = 11;
+	public static readonly RULE_call = 12;
+	public static readonly RULE_access = 13;
 	public static readonly literalNames: (string | null)[] = [ null, null, 
-                                                            "'pub'", "'let'", 
-                                                            "'fn'", "'return'", 
+                                                            null, "'pub'", 
+                                                            "'let'", "'fn'", 
+                                                            "'return'", 
                                                             "'import'", 
                                                             "'if'", "'else'", 
                                                             null, "'.'", 
                                                             "'\"'", "'='", 
                                                             "'('", "')'", 
                                                             "'{'", "'}'", 
-                                                            "','", "';'" ];
-	public static readonly symbolicNames: (string | null)[] = [ null, "BOOLEAN", 
+                                                            "','", "';'", 
+                                                            "':'" ];
+	public static readonly symbolicNames: (string | null)[] = [ null, "TYPE", 
+                                                             "BOOLEAN", 
                                                              "PUB", "LET", 
                                                              "FUNCTION", 
                                                              "RETURN", "IMPORT", 
@@ -79,14 +85,14 @@ export default class GomParser extends Parser {
                                                              "LEFTBRACE", 
                                                              "RIGHTBRACE", 
                                                              "COMMA", "SEMICOLON", 
-                                                             "IDENTIFIER", 
+                                                             "COLON", "IDENTIFIER", 
                                                              "NUMBER", "DIGIT", 
                                                              "LETTER", "STRING_LITERAL", 
                                                              "WHITE_SPACE" ];
 	// tslint:disable:no-trailing-whitespace
 	public static readonly ruleNames: string[] = [
-		"program", "importStatement", "functionDecl", "statementBlock", "statement", 
-		"letStatement", "returnStatement", "ifStatement", "expressionStatement", 
+		"program", "importStatement", "functionDecl", "typedIdentifier", "statementBlock", 
+		"statement", "letStatement", "returnStatement", "ifStatement", "expressionStatement", 
 		"expression", "expressionTail", "call", "access",
 	];
 	public get grammarFileName(): string { return "Gom.g4"; }
@@ -111,44 +117,44 @@ export default class GomParser extends Parser {
 		try {
 			this.enterOuterAlt(localctx, 1);
 			{
-			this.state = 29;
+			this.state = 31;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
-			while (_la===6) {
+			while (_la===7) {
 				{
 				{
-				this.state = 26;
+				this.state = 28;
 				this.importStatement();
 				}
 				}
-				this.state = 31;
+				this.state = 33;
 				this._errHandler.sync(this);
 				_la = this._input.LA(1);
 			}
-			this.state = 34;
+			this.state = 36;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
 			do {
 				{
-				this.state = 34;
+				this.state = 36;
 				this._errHandler.sync(this);
 				switch (this._input.LA(1)) {
-				case 2:
-				case 4:
+				case 3:
+				case 5:
 					{
-					this.state = 32;
+					this.state = 34;
 					this.functionDecl();
 					}
 					break;
-				case 1:
-				case 3:
-				case 5:
-				case 7:
-				case 19:
-				case 20:
-				case 23:
+				case 2:
+				case 4:
+				case 6:
+				case 8:
+				case 21:
+				case 22:
+				case 25:
 					{
-					this.state = 33;
+					this.state = 35;
 					this.statement();
 					}
 					break;
@@ -156,11 +162,11 @@ export default class GomParser extends Parser {
 					throw new NoViableAltException(this);
 				}
 				}
-				this.state = 36;
+				this.state = 38;
 				this._errHandler.sync(this);
 				_la = this._input.LA(1);
-			} while ((((_la) & ~0x1F) === 0 && ((1 << _la) & 9961662) !== 0));
-			this.state = 38;
+			} while ((((_la) & ~0x1F) === 0 && ((1 << _la) & 39846268) !== 0));
+			this.state = 40;
 			this.match(GomParser.EOF);
 			}
 		}
@@ -185,11 +191,11 @@ export default class GomParser extends Parser {
 		try {
 			this.enterOuterAlt(localctx, 1);
 			{
-			this.state = 40;
-			this.match(GomParser.IMPORT);
-			this.state = 41;
-			this.match(GomParser.IDENTIFIER);
 			this.state = 42;
+			this.match(GomParser.IMPORT);
+			this.state = 43;
+			this.match(GomParser.IDENTIFIER);
+			this.state = 44;
 			this.match(GomParser.SEMICOLON);
 			}
 		}
@@ -215,52 +221,85 @@ export default class GomParser extends Parser {
 		try {
 			this.enterOuterAlt(localctx, 1);
 			{
-			this.state = 45;
+			this.state = 47;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
-			if (_la===2) {
+			if (_la===3) {
 				{
-				this.state = 44;
+				this.state = 46;
 				this.match(GomParser.PUB);
 				}
 			}
 
-			this.state = 47;
-			this.match(GomParser.FUNCTION);
-			this.state = 48;
-			this.match(GomParser.IDENTIFIER);
 			this.state = 49;
+			this.match(GomParser.FUNCTION);
+			this.state = 50;
+			this.match(GomParser.IDENTIFIER);
+			this.state = 51;
 			this.match(GomParser.LEFTPAREN);
-			this.state = 58;
+			this.state = 60;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
-			if (_la===19) {
+			if (_la===21) {
 				{
-				this.state = 50;
-				this.match(GomParser.IDENTIFIER);
-				this.state = 55;
+				this.state = 52;
+				this.typedIdentifier();
+				this.state = 57;
 				this._errHandler.sync(this);
 				_la = this._input.LA(1);
-				while (_la===17) {
+				while (_la===18) {
 					{
 					{
-					this.state = 51;
+					this.state = 53;
 					this.match(GomParser.COMMA);
-					this.state = 52;
-					this.match(GomParser.IDENTIFIER);
+					this.state = 54;
+					this.typedIdentifier();
 					}
 					}
-					this.state = 57;
+					this.state = 59;
 					this._errHandler.sync(this);
 					_la = this._input.LA(1);
 				}
 				}
 			}
 
-			this.state = 60;
+			this.state = 62;
 			this.match(GomParser.RIGHTPAREN);
-			this.state = 61;
+			this.state = 63;
+			this.match(GomParser.COLON);
+			this.state = 64;
+			this.match(GomParser.TYPE);
+			this.state = 65;
 			this.statementBlock();
+			}
+		}
+		catch (re) {
+			if (re instanceof RecognitionException) {
+				localctx.exception = re;
+				this._errHandler.reportError(this, re);
+				this._errHandler.recover(this, re);
+			} else {
+				throw re;
+			}
+		}
+		finally {
+			this.exitRule();
+		}
+		return localctx;
+	}
+	// @RuleVersion(0)
+	public typedIdentifier(): TypedIdentifierContext {
+		let localctx: TypedIdentifierContext = new TypedIdentifierContext(this, this._ctx, this.state);
+		this.enterRule(localctx, 6, GomParser.RULE_typedIdentifier);
+		try {
+			this.enterOuterAlt(localctx, 1);
+			{
+			this.state = 67;
+			this.match(GomParser.IDENTIFIER);
+			this.state = 68;
+			this.match(GomParser.COLON);
+			this.state = 69;
+			this.match(GomParser.TYPE);
 			}
 		}
 		catch (re) {
@@ -280,28 +319,28 @@ export default class GomParser extends Parser {
 	// @RuleVersion(0)
 	public statementBlock(): StatementBlockContext {
 		let localctx: StatementBlockContext = new StatementBlockContext(this, this._ctx, this.state);
-		this.enterRule(localctx, 6, GomParser.RULE_statementBlock);
+		this.enterRule(localctx, 8, GomParser.RULE_statementBlock);
 		let _la: number;
 		try {
 			this.enterOuterAlt(localctx, 1);
 			{
-			this.state = 63;
+			this.state = 71;
 			this.match(GomParser.LEFTBRACE);
-			this.state = 65;
+			this.state = 73;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
 			do {
 				{
 				{
-				this.state = 64;
+				this.state = 72;
 				this.statement();
 				}
 				}
-				this.state = 67;
+				this.state = 75;
 				this._errHandler.sync(this);
 				_la = this._input.LA(1);
-			} while ((((_la) & ~0x1F) === 0 && ((1 << _la) & 9961642) !== 0));
-			this.state = 69;
+			} while ((((_la) & ~0x1F) === 0 && ((1 << _la) & 39846228) !== 0));
+			this.state = 77;
 			this.match(GomParser.RIGHTBRACE);
 			}
 		}
@@ -322,39 +361,39 @@ export default class GomParser extends Parser {
 	// @RuleVersion(0)
 	public statement(): StatementContext {
 		let localctx: StatementContext = new StatementContext(this, this._ctx, this.state);
-		this.enterRule(localctx, 8, GomParser.RULE_statement);
+		this.enterRule(localctx, 10, GomParser.RULE_statement);
 		try {
-			this.state = 75;
+			this.state = 83;
 			this._errHandler.sync(this);
 			switch (this._input.LA(1)) {
-			case 3:
+			case 4:
 				this.enterOuterAlt(localctx, 1);
 				{
-				this.state = 71;
+				this.state = 79;
 				this.letStatement();
 				}
 				break;
-			case 5:
+			case 6:
 				this.enterOuterAlt(localctx, 2);
 				{
-				this.state = 72;
+				this.state = 80;
 				this.returnStatement();
 				}
 				break;
-			case 1:
-			case 19:
-			case 20:
-			case 23:
+			case 2:
+			case 21:
+			case 22:
+			case 25:
 				this.enterOuterAlt(localctx, 3);
 				{
-				this.state = 73;
+				this.state = 81;
 				this.expressionStatement();
 				}
 				break;
-			case 7:
+			case 8:
 				this.enterOuterAlt(localctx, 4);
 				{
-				this.state = 74;
+				this.state = 82;
 				this.ifStatement();
 				}
 				break;
@@ -379,19 +418,19 @@ export default class GomParser extends Parser {
 	// @RuleVersion(0)
 	public letStatement(): LetStatementContext {
 		let localctx: LetStatementContext = new LetStatementContext(this, this._ctx, this.state);
-		this.enterRule(localctx, 10, GomParser.RULE_letStatement);
+		this.enterRule(localctx, 12, GomParser.RULE_letStatement);
 		try {
 			this.enterOuterAlt(localctx, 1);
 			{
-			this.state = 77;
+			this.state = 85;
 			this.match(GomParser.LET);
-			this.state = 78;
+			this.state = 86;
 			this.match(GomParser.IDENTIFIER);
-			this.state = 79;
+			this.state = 87;
 			this.match(GomParser.EQ);
-			this.state = 80;
+			this.state = 88;
 			this.expression();
-			this.state = 81;
+			this.state = 89;
 			this.match(GomParser.SEMICOLON);
 			}
 		}
@@ -412,15 +451,15 @@ export default class GomParser extends Parser {
 	// @RuleVersion(0)
 	public returnStatement(): ReturnStatementContext {
 		let localctx: ReturnStatementContext = new ReturnStatementContext(this, this._ctx, this.state);
-		this.enterRule(localctx, 12, GomParser.RULE_returnStatement);
+		this.enterRule(localctx, 14, GomParser.RULE_returnStatement);
 		try {
 			this.enterOuterAlt(localctx, 1);
 			{
-			this.state = 83;
+			this.state = 91;
 			this.match(GomParser.RETURN);
-			this.state = 84;
+			this.state = 92;
 			this.expression();
-			this.state = 85;
+			this.state = 93;
 			this.match(GomParser.SEMICOLON);
 			}
 		}
@@ -441,29 +480,29 @@ export default class GomParser extends Parser {
 	// @RuleVersion(0)
 	public ifStatement(): IfStatementContext {
 		let localctx: IfStatementContext = new IfStatementContext(this, this._ctx, this.state);
-		this.enterRule(localctx, 14, GomParser.RULE_ifStatement);
+		this.enterRule(localctx, 16, GomParser.RULE_ifStatement);
 		let _la: number;
 		try {
 			this.enterOuterAlt(localctx, 1);
 			{
-			this.state = 87;
+			this.state = 95;
 			this.match(GomParser.IF);
-			this.state = 88;
+			this.state = 96;
 			this.match(GomParser.LEFTPAREN);
-			this.state = 89;
+			this.state = 97;
 			this.expression();
-			this.state = 90;
+			this.state = 98;
 			this.match(GomParser.RIGHTPAREN);
-			this.state = 91;
+			this.state = 99;
 			this.statementBlock();
-			this.state = 94;
+			this.state = 102;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
-			if (_la===8) {
+			if (_la===9) {
 				{
-				this.state = 92;
+				this.state = 100;
 				this.match(GomParser.ELSE);
-				this.state = 93;
+				this.state = 101;
 				this.statementBlock();
 				}
 			}
@@ -487,13 +526,13 @@ export default class GomParser extends Parser {
 	// @RuleVersion(0)
 	public expressionStatement(): ExpressionStatementContext {
 		let localctx: ExpressionStatementContext = new ExpressionStatementContext(this, this._ctx, this.state);
-		this.enterRule(localctx, 16, GomParser.RULE_expressionStatement);
+		this.enterRule(localctx, 18, GomParser.RULE_expressionStatement);
 		try {
 			this.enterOuterAlt(localctx, 1);
 			{
-			this.state = 96;
+			this.state = 104;
 			this.expression();
-			this.state = 97;
+			this.state = 105;
 			this.match(GomParser.SEMICOLON);
 			}
 		}
@@ -514,23 +553,23 @@ export default class GomParser extends Parser {
 	// @RuleVersion(0)
 	public expression(): ExpressionContext {
 		let localctx: ExpressionContext = new ExpressionContext(this, this._ctx, this.state);
-		this.enterRule(localctx, 18, GomParser.RULE_expression);
+		this.enterRule(localctx, 20, GomParser.RULE_expression);
 		let _la: number;
 		try {
-			this.state = 123;
+			this.state = 131;
 			this._errHandler.sync(this);
 			switch ( this._interp.adaptivePredict(this._input, 15, this._ctx) ) {
 			case 1:
 				this.enterOuterAlt(localctx, 1);
 				{
-				this.state = 99;
+				this.state = 107;
 				this.match(GomParser.IDENTIFIER);
-				this.state = 101;
+				this.state = 109;
 				this._errHandler.sync(this);
 				_la = this._input.LA(1);
-				if (_la===9) {
+				if (_la===10) {
 					{
-					this.state = 100;
+					this.state = 108;
 					this.expressionTail();
 					}
 				}
@@ -540,14 +579,14 @@ export default class GomParser extends Parser {
 			case 2:
 				this.enterOuterAlt(localctx, 2);
 				{
-				this.state = 103;
+				this.state = 111;
 				this.match(GomParser.NUMBER);
-				this.state = 105;
+				this.state = 113;
 				this._errHandler.sync(this);
 				_la = this._input.LA(1);
-				if (_la===9) {
+				if (_la===10) {
 					{
-					this.state = 104;
+					this.state = 112;
 					this.expressionTail();
 					}
 				}
@@ -557,14 +596,14 @@ export default class GomParser extends Parser {
 			case 3:
 				this.enterOuterAlt(localctx, 3);
 				{
-				this.state = 107;
+				this.state = 115;
 				this.match(GomParser.STRING_LITERAL);
-				this.state = 109;
+				this.state = 117;
 				this._errHandler.sync(this);
 				_la = this._input.LA(1);
-				if (_la===9) {
+				if (_la===10) {
 					{
-					this.state = 108;
+					this.state = 116;
 					this.expressionTail();
 					}
 				}
@@ -574,14 +613,14 @@ export default class GomParser extends Parser {
 			case 4:
 				this.enterOuterAlt(localctx, 4);
 				{
-				this.state = 111;
+				this.state = 119;
 				this.match(GomParser.BOOLEAN);
-				this.state = 113;
+				this.state = 121;
 				this._errHandler.sync(this);
 				_la = this._input.LA(1);
-				if (_la===9) {
+				if (_la===10) {
 					{
-					this.state = 112;
+					this.state = 120;
 					this.expressionTail();
 					}
 				}
@@ -591,14 +630,14 @@ export default class GomParser extends Parser {
 			case 5:
 				this.enterOuterAlt(localctx, 5);
 				{
-				this.state = 115;
+				this.state = 123;
 				this.call();
-				this.state = 117;
+				this.state = 125;
 				this._errHandler.sync(this);
 				_la = this._input.LA(1);
-				if (_la===9) {
+				if (_la===10) {
 					{
-					this.state = 116;
+					this.state = 124;
 					this.expressionTail();
 					}
 				}
@@ -608,14 +647,14 @@ export default class GomParser extends Parser {
 			case 6:
 				this.enterOuterAlt(localctx, 6);
 				{
-				this.state = 119;
+				this.state = 127;
 				this.access();
-				this.state = 121;
+				this.state = 129;
 				this._errHandler.sync(this);
 				_la = this._input.LA(1);
-				if (_la===9) {
+				if (_la===10) {
 					{
-					this.state = 120;
+					this.state = 128;
 					this.expressionTail();
 					}
 				}
@@ -641,13 +680,13 @@ export default class GomParser extends Parser {
 	// @RuleVersion(0)
 	public expressionTail(): ExpressionTailContext {
 		let localctx: ExpressionTailContext = new ExpressionTailContext(this, this._ctx, this.state);
-		this.enterRule(localctx, 20, GomParser.RULE_expressionTail);
+		this.enterRule(localctx, 22, GomParser.RULE_expressionTail);
 		try {
 			this.enterOuterAlt(localctx, 1);
 			{
-			this.state = 125;
+			this.state = 133;
 			this.match(GomParser.OPERATOR);
-			this.state = 126;
+			this.state = 134;
 			this.expression();
 			}
 		}
@@ -668,42 +707,42 @@ export default class GomParser extends Parser {
 	// @RuleVersion(0)
 	public call(): CallContext {
 		let localctx: CallContext = new CallContext(this, this._ctx, this.state);
-		this.enterRule(localctx, 22, GomParser.RULE_call);
+		this.enterRule(localctx, 24, GomParser.RULE_call);
 		let _la: number;
 		try {
 			this.enterOuterAlt(localctx, 1);
 			{
-			this.state = 128;
+			this.state = 136;
 			this.match(GomParser.IDENTIFIER);
-			this.state = 129;
+			this.state = 137;
 			this.match(GomParser.LEFTPAREN);
-			this.state = 138;
+			this.state = 146;
 			this._errHandler.sync(this);
 			_la = this._input.LA(1);
-			if ((((_la) & ~0x1F) === 0 && ((1 << _la) & 9961474) !== 0)) {
+			if ((((_la) & ~0x1F) === 0 && ((1 << _la) & 39845892) !== 0)) {
 				{
-				this.state = 130;
+				this.state = 138;
 				this.expression();
-				this.state = 135;
+				this.state = 143;
 				this._errHandler.sync(this);
 				_la = this._input.LA(1);
-				while (_la===17) {
+				while (_la===18) {
 					{
 					{
-					this.state = 131;
+					this.state = 139;
 					this.match(GomParser.COMMA);
-					this.state = 132;
+					this.state = 140;
 					this.expression();
 					}
 					}
-					this.state = 137;
+					this.state = 145;
 					this._errHandler.sync(this);
 					_la = this._input.LA(1);
 				}
 				}
 			}
 
-			this.state = 140;
+			this.state = 148;
 			this.match(GomParser.RIGHTPAREN);
 			}
 		}
@@ -724,15 +763,15 @@ export default class GomParser extends Parser {
 	// @RuleVersion(0)
 	public access(): AccessContext {
 		let localctx: AccessContext = new AccessContext(this, this._ctx, this.state);
-		this.enterRule(localctx, 24, GomParser.RULE_access);
+		this.enterRule(localctx, 26, GomParser.RULE_access);
 		try {
 			this.enterOuterAlt(localctx, 1);
 			{
-			this.state = 142;
+			this.state = 150;
 			this.match(GomParser.IDENTIFIER);
-			this.state = 143;
+			this.state = 151;
 			this.match(GomParser.DOT);
-			this.state = 144;
+			this.state = 152;
 			this.call();
 			}
 		}
@@ -751,52 +790,54 @@ export default class GomParser extends Parser {
 		return localctx;
 	}
 
-	public static readonly _serializedATN: number[] = [4,1,24,147,2,0,7,0,2,
+	public static readonly _serializedATN: number[] = [4,1,26,155,2,0,7,0,2,
 	1,7,1,2,2,7,2,2,3,7,3,2,4,7,4,2,5,7,5,2,6,7,6,2,7,7,7,2,8,7,8,2,9,7,9,2,
-	10,7,10,2,11,7,11,2,12,7,12,1,0,5,0,28,8,0,10,0,12,0,31,9,0,1,0,1,0,4,0,
-	35,8,0,11,0,12,0,36,1,0,1,0,1,1,1,1,1,1,1,1,1,2,3,2,46,8,2,1,2,1,2,1,2,
-	1,2,1,2,1,2,5,2,54,8,2,10,2,12,2,57,9,2,3,2,59,8,2,1,2,1,2,1,2,1,3,1,3,
-	4,3,66,8,3,11,3,12,3,67,1,3,1,3,1,4,1,4,1,4,1,4,3,4,76,8,4,1,5,1,5,1,5,
-	1,5,1,5,1,5,1,6,1,6,1,6,1,6,1,7,1,7,1,7,1,7,1,7,1,7,1,7,3,7,95,8,7,1,8,
-	1,8,1,8,1,9,1,9,3,9,102,8,9,1,9,1,9,3,9,106,8,9,1,9,1,9,3,9,110,8,9,1,9,
-	1,9,3,9,114,8,9,1,9,1,9,3,9,118,8,9,1,9,1,9,3,9,122,8,9,3,9,124,8,9,1,10,
-	1,10,1,10,1,11,1,11,1,11,1,11,1,11,5,11,134,8,11,10,11,12,11,137,9,11,3,
-	11,139,8,11,1,11,1,11,1,12,1,12,1,12,1,12,1,12,0,0,13,0,2,4,6,8,10,12,14,
-	16,18,20,22,24,0,0,157,0,29,1,0,0,0,2,40,1,0,0,0,4,45,1,0,0,0,6,63,1,0,
-	0,0,8,75,1,0,0,0,10,77,1,0,0,0,12,83,1,0,0,0,14,87,1,0,0,0,16,96,1,0,0,
-	0,18,123,1,0,0,0,20,125,1,0,0,0,22,128,1,0,0,0,24,142,1,0,0,0,26,28,3,2,
-	1,0,27,26,1,0,0,0,28,31,1,0,0,0,29,27,1,0,0,0,29,30,1,0,0,0,30,34,1,0,0,
-	0,31,29,1,0,0,0,32,35,3,4,2,0,33,35,3,8,4,0,34,32,1,0,0,0,34,33,1,0,0,0,
-	35,36,1,0,0,0,36,34,1,0,0,0,36,37,1,0,0,0,37,38,1,0,0,0,38,39,5,0,0,1,39,
-	1,1,0,0,0,40,41,5,6,0,0,41,42,5,19,0,0,42,43,5,18,0,0,43,3,1,0,0,0,44,46,
-	5,2,0,0,45,44,1,0,0,0,45,46,1,0,0,0,46,47,1,0,0,0,47,48,5,4,0,0,48,49,5,
-	19,0,0,49,58,5,13,0,0,50,55,5,19,0,0,51,52,5,17,0,0,52,54,5,19,0,0,53,51,
-	1,0,0,0,54,57,1,0,0,0,55,53,1,0,0,0,55,56,1,0,0,0,56,59,1,0,0,0,57,55,1,
-	0,0,0,58,50,1,0,0,0,58,59,1,0,0,0,59,60,1,0,0,0,60,61,5,14,0,0,61,62,3,
-	6,3,0,62,5,1,0,0,0,63,65,5,15,0,0,64,66,3,8,4,0,65,64,1,0,0,0,66,67,1,0,
-	0,0,67,65,1,0,0,0,67,68,1,0,0,0,68,69,1,0,0,0,69,70,5,16,0,0,70,7,1,0,0,
-	0,71,76,3,10,5,0,72,76,3,12,6,0,73,76,3,16,8,0,74,76,3,14,7,0,75,71,1,0,
-	0,0,75,72,1,0,0,0,75,73,1,0,0,0,75,74,1,0,0,0,76,9,1,0,0,0,77,78,5,3,0,
-	0,78,79,5,19,0,0,79,80,5,12,0,0,80,81,3,18,9,0,81,82,5,18,0,0,82,11,1,0,
-	0,0,83,84,5,5,0,0,84,85,3,18,9,0,85,86,5,18,0,0,86,13,1,0,0,0,87,88,5,7,
-	0,0,88,89,5,13,0,0,89,90,3,18,9,0,90,91,5,14,0,0,91,94,3,6,3,0,92,93,5,
-	8,0,0,93,95,3,6,3,0,94,92,1,0,0,0,94,95,1,0,0,0,95,15,1,0,0,0,96,97,3,18,
-	9,0,97,98,5,18,0,0,98,17,1,0,0,0,99,101,5,19,0,0,100,102,3,20,10,0,101,
-	100,1,0,0,0,101,102,1,0,0,0,102,124,1,0,0,0,103,105,5,20,0,0,104,106,3,
-	20,10,0,105,104,1,0,0,0,105,106,1,0,0,0,106,124,1,0,0,0,107,109,5,23,0,
-	0,108,110,3,20,10,0,109,108,1,0,0,0,109,110,1,0,0,0,110,124,1,0,0,0,111,
-	113,5,1,0,0,112,114,3,20,10,0,113,112,1,0,0,0,113,114,1,0,0,0,114,124,1,
-	0,0,0,115,117,3,22,11,0,116,118,3,20,10,0,117,116,1,0,0,0,117,118,1,0,0,
-	0,118,124,1,0,0,0,119,121,3,24,12,0,120,122,3,20,10,0,121,120,1,0,0,0,121,
-	122,1,0,0,0,122,124,1,0,0,0,123,99,1,0,0,0,123,103,1,0,0,0,123,107,1,0,
-	0,0,123,111,1,0,0,0,123,115,1,0,0,0,123,119,1,0,0,0,124,19,1,0,0,0,125,
-	126,5,9,0,0,126,127,3,18,9,0,127,21,1,0,0,0,128,129,5,19,0,0,129,138,5,
-	13,0,0,130,135,3,18,9,0,131,132,5,17,0,0,132,134,3,18,9,0,133,131,1,0,0,
-	0,134,137,1,0,0,0,135,133,1,0,0,0,135,136,1,0,0,0,136,139,1,0,0,0,137,135,
-	1,0,0,0,138,130,1,0,0,0,138,139,1,0,0,0,139,140,1,0,0,0,140,141,5,14,0,
-	0,141,23,1,0,0,0,142,143,5,19,0,0,143,144,5,10,0,0,144,145,3,22,11,0,145,
-	25,1,0,0,0,18,29,34,36,45,55,58,67,75,94,101,105,109,113,117,121,123,135,
-	138];
+	10,7,10,2,11,7,11,2,12,7,12,2,13,7,13,1,0,5,0,30,8,0,10,0,12,0,33,9,0,1,
+	0,1,0,4,0,37,8,0,11,0,12,0,38,1,0,1,0,1,1,1,1,1,1,1,1,1,2,3,2,48,8,2,1,
+	2,1,2,1,2,1,2,1,2,1,2,5,2,56,8,2,10,2,12,2,59,9,2,3,2,61,8,2,1,2,1,2,1,
+	2,1,2,1,2,1,3,1,3,1,3,1,3,1,4,1,4,4,4,74,8,4,11,4,12,4,75,1,4,1,4,1,5,1,
+	5,1,5,1,5,3,5,84,8,5,1,6,1,6,1,6,1,6,1,6,1,6,1,7,1,7,1,7,1,7,1,8,1,8,1,
+	8,1,8,1,8,1,8,1,8,3,8,103,8,8,1,9,1,9,1,9,1,10,1,10,3,10,110,8,10,1,10,
+	1,10,3,10,114,8,10,1,10,1,10,3,10,118,8,10,1,10,1,10,3,10,122,8,10,1,10,
+	1,10,3,10,126,8,10,1,10,1,10,3,10,130,8,10,3,10,132,8,10,1,11,1,11,1,11,
+	1,12,1,12,1,12,1,12,1,12,5,12,142,8,12,10,12,12,12,145,9,12,3,12,147,8,
+	12,1,12,1,12,1,13,1,13,1,13,1,13,1,13,0,0,14,0,2,4,6,8,10,12,14,16,18,20,
+	22,24,26,0,0,164,0,31,1,0,0,0,2,42,1,0,0,0,4,47,1,0,0,0,6,67,1,0,0,0,8,
+	71,1,0,0,0,10,83,1,0,0,0,12,85,1,0,0,0,14,91,1,0,0,0,16,95,1,0,0,0,18,104,
+	1,0,0,0,20,131,1,0,0,0,22,133,1,0,0,0,24,136,1,0,0,0,26,150,1,0,0,0,28,
+	30,3,2,1,0,29,28,1,0,0,0,30,33,1,0,0,0,31,29,1,0,0,0,31,32,1,0,0,0,32,36,
+	1,0,0,0,33,31,1,0,0,0,34,37,3,4,2,0,35,37,3,10,5,0,36,34,1,0,0,0,36,35,
+	1,0,0,0,37,38,1,0,0,0,38,36,1,0,0,0,38,39,1,0,0,0,39,40,1,0,0,0,40,41,5,
+	0,0,1,41,1,1,0,0,0,42,43,5,7,0,0,43,44,5,21,0,0,44,45,5,19,0,0,45,3,1,0,
+	0,0,46,48,5,3,0,0,47,46,1,0,0,0,47,48,1,0,0,0,48,49,1,0,0,0,49,50,5,5,0,
+	0,50,51,5,21,0,0,51,60,5,14,0,0,52,57,3,6,3,0,53,54,5,18,0,0,54,56,3,6,
+	3,0,55,53,1,0,0,0,56,59,1,0,0,0,57,55,1,0,0,0,57,58,1,0,0,0,58,61,1,0,0,
+	0,59,57,1,0,0,0,60,52,1,0,0,0,60,61,1,0,0,0,61,62,1,0,0,0,62,63,5,15,0,
+	0,63,64,5,20,0,0,64,65,5,1,0,0,65,66,3,8,4,0,66,5,1,0,0,0,67,68,5,21,0,
+	0,68,69,5,20,0,0,69,70,5,1,0,0,70,7,1,0,0,0,71,73,5,16,0,0,72,74,3,10,5,
+	0,73,72,1,0,0,0,74,75,1,0,0,0,75,73,1,0,0,0,75,76,1,0,0,0,76,77,1,0,0,0,
+	77,78,5,17,0,0,78,9,1,0,0,0,79,84,3,12,6,0,80,84,3,14,7,0,81,84,3,18,9,
+	0,82,84,3,16,8,0,83,79,1,0,0,0,83,80,1,0,0,0,83,81,1,0,0,0,83,82,1,0,0,
+	0,84,11,1,0,0,0,85,86,5,4,0,0,86,87,5,21,0,0,87,88,5,13,0,0,88,89,3,20,
+	10,0,89,90,5,19,0,0,90,13,1,0,0,0,91,92,5,6,0,0,92,93,3,20,10,0,93,94,5,
+	19,0,0,94,15,1,0,0,0,95,96,5,8,0,0,96,97,5,14,0,0,97,98,3,20,10,0,98,99,
+	5,15,0,0,99,102,3,8,4,0,100,101,5,9,0,0,101,103,3,8,4,0,102,100,1,0,0,0,
+	102,103,1,0,0,0,103,17,1,0,0,0,104,105,3,20,10,0,105,106,5,19,0,0,106,19,
+	1,0,0,0,107,109,5,21,0,0,108,110,3,22,11,0,109,108,1,0,0,0,109,110,1,0,
+	0,0,110,132,1,0,0,0,111,113,5,22,0,0,112,114,3,22,11,0,113,112,1,0,0,0,
+	113,114,1,0,0,0,114,132,1,0,0,0,115,117,5,25,0,0,116,118,3,22,11,0,117,
+	116,1,0,0,0,117,118,1,0,0,0,118,132,1,0,0,0,119,121,5,2,0,0,120,122,3,22,
+	11,0,121,120,1,0,0,0,121,122,1,0,0,0,122,132,1,0,0,0,123,125,3,24,12,0,
+	124,126,3,22,11,0,125,124,1,0,0,0,125,126,1,0,0,0,126,132,1,0,0,0,127,129,
+	3,26,13,0,128,130,3,22,11,0,129,128,1,0,0,0,129,130,1,0,0,0,130,132,1,0,
+	0,0,131,107,1,0,0,0,131,111,1,0,0,0,131,115,1,0,0,0,131,119,1,0,0,0,131,
+	123,1,0,0,0,131,127,1,0,0,0,132,21,1,0,0,0,133,134,5,10,0,0,134,135,3,20,
+	10,0,135,23,1,0,0,0,136,137,5,21,0,0,137,146,5,14,0,0,138,143,3,20,10,0,
+	139,140,5,18,0,0,140,142,3,20,10,0,141,139,1,0,0,0,142,145,1,0,0,0,143,
+	141,1,0,0,0,143,144,1,0,0,0,144,147,1,0,0,0,145,143,1,0,0,0,146,138,1,0,
+	0,0,146,147,1,0,0,0,147,148,1,0,0,0,148,149,5,15,0,0,149,25,1,0,0,0,150,
+	151,5,21,0,0,151,152,5,11,0,0,152,153,3,24,12,0,153,27,1,0,0,0,18,31,36,
+	38,47,57,60,75,83,102,109,113,117,121,125,129,131,143,146];
 
 	private static __ATN: ATN;
 	public static get _ATN(): ATN {
@@ -908,11 +949,8 @@ export class FunctionDeclContext extends ParserRuleContext {
 	public FUNCTION(): TerminalNode {
 		return this.getToken(GomParser.FUNCTION, 0);
 	}
-	public IDENTIFIER_list(): TerminalNode[] {
-	    	return this.getTokens(GomParser.IDENTIFIER);
-	}
-	public IDENTIFIER(i: number): TerminalNode {
-		return this.getToken(GomParser.IDENTIFIER, i);
+	public IDENTIFIER(): TerminalNode {
+		return this.getToken(GomParser.IDENTIFIER, 0);
 	}
 	public LEFTPAREN(): TerminalNode {
 		return this.getToken(GomParser.LEFTPAREN, 0);
@@ -920,11 +958,23 @@ export class FunctionDeclContext extends ParserRuleContext {
 	public RIGHTPAREN(): TerminalNode {
 		return this.getToken(GomParser.RIGHTPAREN, 0);
 	}
+	public COLON(): TerminalNode {
+		return this.getToken(GomParser.COLON, 0);
+	}
+	public TYPE(): TerminalNode {
+		return this.getToken(GomParser.TYPE, 0);
+	}
 	public statementBlock(): StatementBlockContext {
 		return this.getTypedRuleContext(StatementBlockContext, 0) as StatementBlockContext;
 	}
 	public PUB(): TerminalNode {
 		return this.getToken(GomParser.PUB, 0);
+	}
+	public typedIdentifier_list(): TypedIdentifierContext[] {
+		return this.getTypedRuleContexts(TypedIdentifierContext) as TypedIdentifierContext[];
+	}
+	public typedIdentifier(i: number): TypedIdentifierContext {
+		return this.getTypedRuleContext(TypedIdentifierContext, i) as TypedIdentifierContext;
 	}
 	public COMMA_list(): TerminalNode[] {
 	    	return this.getTokens(GomParser.COMMA);
@@ -949,6 +999,44 @@ export class FunctionDeclContext extends ParserRuleContext {
 	public accept<Result>(visitor: GomVisitor<Result>): Result {
 		if (visitor.visitFunctionDecl) {
 			return visitor.visitFunctionDecl(this);
+		} else {
+			return visitor.visitChildren(this);
+		}
+	}
+}
+
+
+export class TypedIdentifierContext extends ParserRuleContext {
+	constructor(parser?: GomParser, parent?: ParserRuleContext, invokingState?: number) {
+		super(parent, invokingState);
+    	this.parser = parser;
+	}
+	public IDENTIFIER(): TerminalNode {
+		return this.getToken(GomParser.IDENTIFIER, 0);
+	}
+	public COLON(): TerminalNode {
+		return this.getToken(GomParser.COLON, 0);
+	}
+	public TYPE(): TerminalNode {
+		return this.getToken(GomParser.TYPE, 0);
+	}
+    public get ruleIndex(): number {
+    	return GomParser.RULE_typedIdentifier;
+	}
+	public enterRule(listener: GomListener): void {
+	    if(listener.enterTypedIdentifier) {
+	 		listener.enterTypedIdentifier(this);
+		}
+	}
+	public exitRule(listener: GomListener): void {
+	    if(listener.exitTypedIdentifier) {
+	 		listener.exitTypedIdentifier(this);
+		}
+	}
+	// @Override
+	public accept<Result>(visitor: GomVisitor<Result>): Result {
+		if (visitor.visitTypedIdentifier) {
+			return visitor.visitTypedIdentifier(this);
 		} else {
 			return visitor.visitChildren(this);
 		}
